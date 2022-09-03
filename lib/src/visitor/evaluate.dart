@@ -5,7 +5,7 @@
 // DO NOT EDIT. This file was generated from async_evaluate.dart.
 // See tool/grind/synchronize.dart for details.
 //
-// Checksum: c70a4193cc291f298f601a5cc371be9eac71fb74
+// Checksum: 6a909d74d8d9995cbe31e05b63c9a2f92034ec30
 //
 // ignore_for_file: unused_import
 
@@ -478,7 +478,13 @@ class _EvaluateVisitor
 
     var metaMixins = [
       BuiltInCallable.mixin("load-css", r"$url, $with: null", (arguments) {
-        var url = Uri.parse(arguments[0].assertString("url").text);
+        var urlText = arguments[0].assertString("url").text;
+        Uri url;
+        try {
+          url = Uri.parse(urlText);
+        } on FormatException catch (error) {
+          throw SassScriptException("\$url: Invalid URL: ${error.message}.");
+        }
         var withMap = arguments[1].realNull?.assertMap("with").contents;
 
         var callableNode = _callableNode!;

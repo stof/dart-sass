@@ -473,7 +473,13 @@ class _EvaluateVisitor
     var metaMixins = [
       AsyncBuiltInCallable.mixin("load-css", r"$url, $with: null",
           (arguments) async {
-        var url = Uri.parse(arguments[0].assertString("url").text);
+        var urlText = arguments[0].assertString("url").text;
+        Uri url;
+        try {
+          url = Uri.parse(urlText);
+        } on FormatException catch (error) {
+          throw SassScriptException("\$url: Invalid URL: ${error.message}.");
+        }
         var withMap = arguments[1].realNull?.assertMap("with").contents;
 
         var callableNode = _callableNode!;
